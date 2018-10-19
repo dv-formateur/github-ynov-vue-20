@@ -9,6 +9,17 @@
         {{project.name}}
       </li>
     </ul>
+
+      <select name="" id="" @changes="event()">
+        <option value="test">
+          test
+        </option>
+        <option value="test2">
+          test2
+        </option>
+      </select>
+
+    <input type="text"  v-on:input="ttr">
   </div>
 </template>
 
@@ -66,6 +77,9 @@
                 else{
                     this.errorDate = "Select a date interval"
                 }
+            },
+            ttr: function(event){
+                console.log(event)
             }
         }
     }

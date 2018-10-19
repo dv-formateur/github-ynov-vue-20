@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "node server.js",
     "build": "vue-cli-service build",
     "serve": "vue-cli-service serve",
     "lint": "vue-cli-service lint"
@@ -11,7 +12,8 @@
     "axios": "^0.18.0",
     "uikit": "^3.0.0-rc.19",
     "vue": "^2.5.17",
-    "vue-rangedate-picker": "^0.3.4"
+    "vue-rangedate-picker": "^0.3.4",
+    "express": "^4.16.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.5",
