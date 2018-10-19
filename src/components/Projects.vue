@@ -1,24 +1,37 @@
 <template>
   <div id="Projects">
-    <date-picker i18n="EN" @selected="onDateSelected" compat="true"></date-picker>
-    <div v-if='selectedDate.start !== "" && selectedDate.end !== ""'>
-      {{ formatDate(selectedDate.start) }}
-      {{ formatDate(selectedDate.end) }}
+    <div id="filter-container">
+      <div>
+        <label for="date_range">Date range :</label>
+        </br>
+        <date-picker name="date_range" i18n="EN" @selected="onDateSelected" compat="true"></date-picker>
+        <button v-on:click="resetDate()">
+          X
+        </button>
+      </div>
+      <div>
+        <label for="select_user">User :</label>
+        </br>
+        <select name="select_user" v-on:change="refreshData" v-model="user_selected">
+          <option value="All">All</option>
+          <option v-for="option in usernames" v-bind:value="option">{{option}}</option>
+        </select>
+      </div>
+      <div>
+        <label for="project_select">Projet :</label>
+        </br>
+        <select name="project_select" v-on:change="refreshData" v-model="project_selected">
+          <option value="All">All</option>
+          <option v-for="project in projects" v-bind:value="project.full_name">{{project.full_name}}</option>
+        </select>
+      </div>
     </div>
-    <select v-on:change="refreshData" v-model="user_selected">
-      <option value="All">All</option>
-      <option v-for="option in usernames" v-bind:value="option">{{option}}</option>
-    </select>
-    <select v-on:change="refreshData" v-model="project_selected">
-      <option value="All">All</option>
-      <option v-for="project in projects" v-bind:value="project.full_name">{{project.full_name}}</option>
-    </select>
 
     <span>
       {{errorDate}}
     </span>
     <div id="project-container" class="uk-container">
-      <div v-for="project in projects" class="project">
+      <div v-for="project in projects_to_display" class="project">
         <div class="project-full_name">
           <h2>{{project.full_name}}</h2>
         </div>
@@ -48,45 +61,22 @@
                 user_selected: "All",
                 project_selected: "All",
                 projects: [],
+                projects_to_display:[],
                 errorDate: "",
                 selectedDate: {
                     start: "",
                     end: ""
                 },
-                usernames:[
-                    "Killy85",
-                    "Nair0fl",
-                    "raphaelCharre",
-                    "mathiasLoiret",
-                    "thomaspich",
-                    "TeofiloJ",
-                    "Grigusky",
-                    "Dakistos",
-                    "mael61",
-                    "KevinPautonnier",
-                    "BenoitCochet",
-                    "sfongue",
-                    "ClementCaillaud",
-                    "gfourny",
-                    "Mokui",
-                    "LordInateur",
-                    "AntoineGOSSET",
-                    "etienneYnov",
-                    "Coblestone",
-                    "AlexDesvallees",
-                    "rudy8530",
-                    "benjaminbra",
-                    "mael61",
-                    "alixnzt"
-                ]
+                usernames:[]
             }
         },
         created(){
             var that = this
-            axios.defaults.headers.common["Authorization"] = "token dfdf7a0cf2745356b05221eb9815ded830b709dc";
+            axios.defaults.headers.common["Authorization"] = "token f1de932b39e81cfb4bfd889d3fa98727a67d0eef";
             axios({method: "GET", "url": "https://api.github.com/search/repositories?q=github-ynov-vue"}).then((result)=>{
                 if(result.data.items.length > 0) {
                     result.data.items.forEach((project) => {
+                        this.usernames.push(project.full_name.split('/')[0])
                         project.commits = []
                         axios({method: "GET", "url": "https://api.github.com/repos/"+project.full_name+"/commits"}).then((res)=>{
                             if(res.data.length > 0) {
@@ -104,8 +94,8 @@
                         this.projects.push(project)
                     })
                 }
-                console.log(this.projects)
-                console.log(this.projects[0].commits)
+                this.projects_to_display = Object.assign(this.projects)
+                console.log(this.projects_to_display)
             })
         },
         mounted(){
@@ -123,8 +113,31 @@
                 this.refreshData()
             },
             refreshData: function(event){
-                console.log(this.user_selected)
-                console.log(this.selectedDate)
+                var new_array = JSON.parse(JSON.stringify(this.projects));
+                var last = new_array.length
+                if(this.project_selected != "All"){
+                    for(var i = 0; i<last;i++){
+                        if(new_array[i].full_name != this.project_selected){
+                            new_array.splice(i, 1)
+                            i--
+                            last--
+                        }
+                    }
+                }
+                last = new_array.length
+                if(this.user_selected != "All"){
+                    for(i = 0; i<last;i++){
+                        if(new_array[i].full_name.split('/')[0] != this.user_selected){
+                            new_array.splice(i, 1)
+                            i--
+                            last--
+                        }
+                    }
+                }
+
+
+
+                this.projects_to_display = new_array
             },
             formatDate: (date) => {
                 date = new Date(date)
@@ -140,12 +153,15 @@
                 var year = date.getFullYear();
 
                 return day + ' ' + monthNames[monthIndex] + ' ' + year;
+            },
+            resetDate: ()=>{
+                this.selectedDate.start = ""
+                this.selectedDate.end = ""
             }
         }
     }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
   h3 {
     margin: 40px 0 0;
@@ -161,8 +177,21 @@
   a {
     color: #42b983;
   }
-
-
+  #filter-container{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 70px;
+    background: #878787;
+  }
+  #filter-container select{
+    background: transparent;
+    border-radius: 0;
+    border: 0;
+    width: 200px;
+    color: #FFF;
+    border: 0;
+  }
   .project{
     width: 100%;
     background: #efefef;
