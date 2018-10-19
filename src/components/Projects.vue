@@ -72,7 +72,7 @@
         },
         created(){
             var that = this
-            axios.defaults.headers.common["Authorization"] = "token f1de932b39e81cfb4bfd889d3fa98727a67d0eef";
+            axios.defaults.headers.common["Authorization"] = "token f9b17e0a48f859a097773b394bf04082e83c9176";
             axios({method: "GET", "url": "https://api.github.com/search/repositories?q=github-ynov-vue"}).then((result)=>{
                 if(result.data.items.length > 0) {
                     result.data.items.forEach((project) => {
