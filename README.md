@@ -1,26 +1,6 @@
 # github-ynov-vue
 
-## Project setup
+##Project
 ```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
+Launch dist/index.html
 ```

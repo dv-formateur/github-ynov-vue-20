@@ -71,12 +71,13 @@
                     start: "",
                     end: ""
                 },
-                usernames:[]
+                usernames:[],
+                API_TOKEN: "f9b17e0a48f859a097773b394bf04082e83c9176"
             }
         },
         created(){
             var that = this
-            axios.defaults.headers.common["Authorization"] = "token f9b17e0a48f859a097773b394bf04082e83c9176";
+            axios.defaults.headers.common["Authorization"] = "token "+this.API_TOKEN;
             axios({method: "GET", "url": "https://api.github.com/search/repositories?q=github-ynov-vue"}).then((result)=>{
                 if(result.data.items.length > 0) {
                     result.data.items.forEach((project) => {
