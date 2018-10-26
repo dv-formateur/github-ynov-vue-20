@@ -1,6 +1,9 @@
 # github-ynov-vue
 
-##Project
+##To run
 ```
-Launch dist/index.html
+Clone 
+Replace API_TOKEN by your token auth token in src/components/Projects.vue
+run 'npm run-script build'
+open dist/index.html 
 ```
