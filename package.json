@@ -10,10 +10,13 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "babel-core": "^6.26.3",
+    "babel-runtime": "^6.26.0",
+    "express": "^4.16.4",
     "uikit": "^3.0.0-rc.19",
     "vue": "^2.5.17",
-    "vue-rangedate-picker": "^0.3.4",
-    "express": "^4.16.4"
+    "vue-markdown": "^2.2.4",
+    "vue-rangedate-picker": "^0.3.4"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.0.5",

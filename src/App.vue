@@ -6,15 +6,18 @@
 </template>
 
 <script>
-  import Projects from "./components/Projects.vue"
-  import Navbar from "./components/Navbar.vue"
-export default {
-  name: 'app',
-  components: {
-      Projects,
-      Navbar
-  }
-}
+    import Projects from "./components/Projects.vue"
+    import Navbar from "./components/Navbar.vue"
+    import VueMarkdown from 'vue-markdown'
+
+    export default {
+        name: 'app',
+        components: {
+            Projects,
+            Navbar,
+            VueMarkdown
+        }
+    }
 </script>
 
 <style>

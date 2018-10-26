@@ -4,7 +4,7 @@
       <div>
         <label for="date_range">Date range :</label>
         </br>
-        <date-picker name="date_range" i18n="EN" @selected="onDateSelected" compat="true"></date-picker>
+        <date-picker id="date_range" name="date_range" i18n="EN" @selected="onDateSelected" compat="true"></date-picker>
         <button v-on:click="resetDate()">
           X
         </button>
@@ -12,7 +12,7 @@
       <div>
         <label for="select_user">User :</label>
         </br>
-        <select name="select_user" v-on:change="refreshData" v-model="user_selected">
+        <select name="select_user" id="select_user" v-on:change="refreshData" v-model="user_selected">
           <option value="All">All</option>
           <option v-for="option in usernames" v-bind:value="option">{{option}}</option>
         </select>
@@ -20,7 +20,7 @@
       <div>
         <label for="project_select">Projet :</label>
         </br>
-        <select name="project_select" v-on:change="refreshData" v-model="project_selected">
+        <select name="project_select" id="project_select" v-on:change="refreshData" v-model="project_selected">
           <option value="All">All</option>
           <option v-for="project in projects" v-bind:value="project.full_name">{{project.full_name}}</option>
         </select>
@@ -35,17 +35,21 @@
         <div class="project-full_name">
           <h2>{{project.full_name}}</h2>
         </div>
-        <div>
-          Commits : {{project.commits.length}}
-        </div>
-
-        <div class="commit-message" v-for="commit_container in project.commits">
-          {{formatDate(commit_container[0].commit.author.date)}}
-          <div v-for="commit in commit_container" class="commits-details">
-            {{commit.commit.author.name}} ({{commit.commit.author.email}}) : {{commit.commit.message}}
+        <div class="left-side">
+          <div>
+            Commits : {{project.commits.length}}
+          </div>
+          <div class="commit-message" v-for="commit_container in project.commits">
+            {{formatDate(commit_container[0].commit.author.date)}}
+            <div v-for="commit in commit_container" class="commits-details">
+              {{commit.commit.author.name}} ({{commit.commit.author.email}}) : {{commit.commit.message}}
+            </div>
           </div>
         </div>
-
+        <div class="right-side">
+          .README
+          <div v-html="project.readme"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -90,6 +94,10 @@
                                     project.commits[project.commits.length-1].push(commit)
                                 })
                             }
+                        })
+                        axios({method:"GET", "url":"https://api.github.com/repos/"+project.full_name+"/readme"}).then((res)=>{
+                            console.log(this.b64DecodeUnicode(res.data.content))
+                            project.readme = this.b64DecodeUnicode(res.data.content).replace(/(?:\r\n|\r|\n)/g, '</br>');
                         })
                         this.projects.push(project)
                     })
@@ -154,9 +162,14 @@
 
                 return day + ' ' + monthNames[monthIndex] + ' ' + year;
             },
-            resetDate: ()=>{
+            resetDate: () => {
                 this.selectedDate.start = ""
                 this.selectedDate.end = ""
+            },
+            b64DecodeUnicode: (str)=> {
+                return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
+                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+                }).join(''))
             }
         }
     }
@@ -183,6 +196,11 @@
     align-items: center;
     height: 70px;
     background: #878787;
+  }
+  @media (max-width: 768px) {
+    #filter-container{
+      flex-direction: column;
+    }
   }
   #filter-container select{
     background: transparent;
@@ -213,5 +231,17 @@
     padding-left: 20px;
     padding-top: 10px;
     padding-bottom: 10px;
+  }
+  .left-side,
+  .right-side{
+    width: 50%;
+    display: inline-block;
+    vertical-align: top;
+  }
+  @media (max-width: 768px) {
+    .left-side,
+    .right-side{
+      width: 100%;
+    }
   }
 </style>
